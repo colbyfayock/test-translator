@@ -36,9 +36,18 @@ const Translator = () => {
   useEffect(() => {
     synthRef.current = window.speechSynthesis;
 
-    synthRef.current.onvoiceschanged = function() {
-      const voices = synthRef.current?.getVoices();
+    const voices = synthRef.current?.getVoices();
+
+    if ( Array.isArray(voices) && voices.length > 0 ) {
       setVoices(voices);
+      return;
+    }
+
+    if ('onvoiceschanged' in synthRef.current) {
+      synthRef.current.onvoiceschanged = function() {
+        const voices = synthRef.current?.getVoices();
+        setVoices(voices);
+      }
     }
   }, []);
 
