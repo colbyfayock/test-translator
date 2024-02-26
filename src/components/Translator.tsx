@@ -77,6 +77,9 @@ const Translator = () => {
       setIsActive(false);
       return;
     }
+
+    // Enables audio for session based on user action
+    new SpeechSynthesisUtterance('')
     
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
