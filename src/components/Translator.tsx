@@ -94,6 +94,16 @@ const Translator = () => {
       setIsSoundDetected(false);
     }
 
+    recognitionRef.current.onaudiostart = function() {
+      console.log('onaudiostart')
+      setIsSoundDetected(true);
+    }
+
+    recognitionRef.current.onaudioend = function() {
+      console.log('audioend')
+      setIsSoundDetected(false);
+    }
+
     recognitionRef.current.onsoundstart = function() {
       console.log('onsoundstart')
       setIsSoundDetected(true);
