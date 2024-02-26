@@ -35,7 +35,11 @@ const Translator = () => {
   const activeLanguage = availableLanguages.find(({ lang }) => language === lang);
 
   const availableVoices = voices?.filter(({ lang }) => lang === language);
-  const activeVoice = availableVoices?.find(({ name }) => name.includes('Google')) || availableVoices?.[0];
+  console.log('availableVoices', availableVoices)
+  const activeVoice = 
+    availableVoices?.find(({ name }) => name.includes('Google'))
+    || availableVoices?.find(({ name }) => name.includes('Luciana'))
+    || availableVoices?.[0];
 
   console.log('activeVoice', activeVoice)
 
@@ -57,37 +61,10 @@ const Translator = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   (async function run() {
-  //     if ( !text || !synthRef.current || !activeVoice ) return;
-      
-  //     const translatedText = await translate(text);
-
-  //     setTranslation(translatedText);
-
-  //     const utterance = new SpeechSynthesisUtterance(translatedText);
-
-  //     utterance.voice = activeVoice;
-  //     utterance.pitch = 1
-  //     utterance.rate = 1
-  //     // @ts-expect-error
-  //     utterance.voiceURI = activeVoice.voiceURI;
-  //     utterance.volume = 1
-  //     utterance.rate = 1
-  //     utterance.pitch = 0.8
-  //     utterance.text = text
-  //     utterance.lang = language
-
-  //     synthRef.current.cancel();
-  //     synthRef.current.speak(utterance);
-  //   })()
-  // }, [text, synthRef.current, activeVoice])
-
-  function handleOnClick() {
-
+  function speak(text: string) {
     if ( !activeVoice || !synthRef.current ) return;
 
-    const utterance = new SpeechSynthesisUtterance(' ');
+    const utterance = new SpeechSynthesisUtterance(text);
 
     utterance.voice = activeVoice;
     utterance.pitch = 1
@@ -97,11 +74,19 @@ const Translator = () => {
     utterance.volume = 1
     utterance.rate = 1
     utterance.pitch = 0.8
-    utterance.text = ' ';
+    utterance.text = text;
     utterance.lang = language
 
     synthRef.current.cancel();
     synthRef.current.speak(utterance);
+  }
+
+
+  function handleOnClick() {
+
+    
+    speak(' ');
+    
 
 
 
@@ -167,29 +152,7 @@ const Translator = () => {
 
       if ( !activeVoice || !synthRef.current ) return;
 
-      const utterance = new SpeechSynthesisUtterance(translatedText);
-
-      utterance.voice = activeVoice;
-      utterance.pitch = 1
-      utterance.rate = 1
-      // @ts-expect-error
-      utterance.voiceURI = activeVoice.voiceURI;
-      utterance.volume = 1
-      utterance.rate = 1
-      utterance.pitch = 0.8
-      utterance.text = transcript
-      utterance.lang = language
-
-      synthRef.current.cancel();
-      synthRef.current.speak(utterance);
-
-
-
-
-
-
-
-
+      speak(translatedText);
     }
 
     recognitionRef.current.start();
