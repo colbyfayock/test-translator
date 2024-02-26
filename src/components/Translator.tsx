@@ -85,9 +85,23 @@ const Translator = () => {
 
   function handleOnClick() {
 
+    if ( !activeVoice || !synthRef.current ) return;
 
+    const utterance = new SpeechSynthesisUtterance(' ');
 
-    const utterance = new SpeechSynthesisUtterance();
+    utterance.voice = activeVoice;
+    utterance.pitch = 1
+    utterance.rate = 1
+    // @ts-expect-error
+    utterance.voiceURI = activeVoice.voiceURI;
+    utterance.volume = 1
+    utterance.rate = 1
+    utterance.pitch = 0.8
+    utterance.text = ' ';
+    utterance.lang = language
+
+    synthRef.current.cancel();
+    synthRef.current.speak(utterance);
 
 
 
@@ -98,6 +112,9 @@ const Translator = () => {
       setIsActive(false);
       return;
     }
+
+    // Enables audio for session based on user action
+    new SpeechSynthesisUtterance('test')
     
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
@@ -150,6 +167,8 @@ const Translator = () => {
 
       if ( !activeVoice || !synthRef.current ) return;
 
+      const utterance = new SpeechSynthesisUtterance(translatedText);
+
       utterance.voice = activeVoice;
       utterance.pitch = 1
       utterance.rate = 1
@@ -160,7 +179,7 @@ const Translator = () => {
       utterance.pitch = 0.8
       utterance.text = transcript
       utterance.lang = language
-  
+
       synthRef.current.cancel();
       synthRef.current.speak(utterance);
 
