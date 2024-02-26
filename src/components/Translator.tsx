@@ -17,6 +17,9 @@ const Translator = () => {
   const [voices, setVoices] = useState<Array<SpeechSynthesisVoice>>();
   const [language, setLanguage] = useState<string>('pt-BR');
 
+  console.log('voices', voices)
+  console.log('language', language)
+
   const availableLanguages = Array.from(new Set(voices?.map(({ lang }) => lang)))
     .map(lang => {
       const split = lang.split('-');
@@ -33,6 +36,8 @@ const Translator = () => {
 
   const availableVoices = voices?.filter(({ lang }) => lang === language);
   const activeVoice = availableVoices?.find(({ name }) => name.includes('Google')) || availableVoices?.[0];
+
+  console.log('activeVoice', activeVoice)
 
   useEffect(() => {
     synthRef.current = window.speechSynthesis;
