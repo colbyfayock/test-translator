@@ -8,6 +8,7 @@ const countryCodes: Record<string, string> = countryCodesData;
 
 const Translator = () => {
   const synthRef = useRef<SpeechSynthesis>();
+  const recognitionRef = useRef<SpeechRecognition>();
 
   const [isActive, setIsActive] = useState(false);
   const [isSpeechDetected, setIsSoundDetected] = useState(false);
@@ -71,35 +72,45 @@ const Translator = () => {
   }, [text, synthRef.current, activeVoice])
 
   function handleOnClick() {
+    if ( isActive ) {
+      recognitionRef.current?.stop();
+      setIsActive(false);
+      return;
+    }
+    
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    recognitionRef.current = new SpeechRecognition();
 
-    console.log('recognition', recognition)
+    console.log('recognition', recognitionRef.current)
 
-    recognition.onstart = function() {
+    recognitionRef.current.onstart = function() {
+      console.log('onstart')
       setIsActive(true);
     }
 
-    recognition.onend = function() {
+    recognitionRef.current.onend = function() {
+      console.log('onend')
       setIsActive(false);
       setIsSoundDetected(false);
     }
 
-    recognition.onsoundstart = function() {
+    recognitionRef.current.onsoundstart = function() {
+      console.log('onsoundstart')
       setIsSoundDetected(true);
     }
 
-    recognition.onsoundend = function() {
+    recognitionRef.current.onsoundend = function() {
+      console.log('onsoundend')
       setIsSoundDetected(false);
     }
 
-    recognition.onresult = function(event) {
-      console.log('event', event)
+    recognitionRef.current.onresult = function(event) {
+      console.log('onresult', event)
       const transcript = event.results[0][0].transcript;
       setText(transcript);
     }
 
-    recognition.start();
+    recognitionRef.current.start();
   }
 
   async function translate(text: string) {
@@ -161,10 +172,10 @@ const Translator = () => {
             </form>
             <p>
               <button
-                className="w-full h-full uppercase font-semibold text-sm text-zinc-400 bg-zinc-900 color-white py-3 rounded-sm"
+                className={`w-full h-full uppercase font-semibold text-sm  ${isActive ? 'text-white bg-red-500' : 'text-zinc-400 bg-zinc-900'} color-white py-3 rounded-sm`}
                 onClick={handleOnClick}
               >
-                Record
+                { isActive ? 'Stop' : 'Record' }
               </button>
             </p>
           </div>
