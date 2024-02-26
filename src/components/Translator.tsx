@@ -81,6 +81,9 @@ const Translator = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
 
+    // @ts-expect-error
+    recognitionRef.interimResults = true;
+
     console.log('recognition', recognitionRef.current)
 
     recognitionRef.current.onstart = function() {
