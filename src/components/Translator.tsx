@@ -17,9 +17,6 @@ const Translator = () => {
   const [voices, setVoices] = useState<Array<SpeechSynthesisVoice>>();
   const [language, setLanguage] = useState<string>('pt-BR');
 
-  console.log('voices', voices)
-  console.log('language', language)
-
   const availableLanguages = Array.from(new Set(voices?.map(({ lang }) => lang)))
     .map(lang => {
       const split = lang.split('-');
@@ -35,13 +32,11 @@ const Translator = () => {
   const activeLanguage = availableLanguages.find(({ lang }) => language === lang);
 
   const availableVoices = voices?.filter(({ lang }) => lang === language);
-  console.log('availableVoices', availableVoices)
+
   const activeVoice = 
     availableVoices?.find(({ name }) => name.includes('Google'))
     || availableVoices?.find(({ name }) => name.includes('Luciana'))
     || availableVoices?.[0];
-
-  console.log('activeVoice', activeVoice)
 
   useEffect(() => {
     synthRef.current = window.speechSynthesis;
@@ -84,13 +79,11 @@ const Translator = () => {
 
   function handleOnClick() {
 
-    
+    // Utterance will only work based on user action which we
+    // technically can't do because we're waiting for a callback
+    // but if we trigger an empty one here, it will consider
+    // it initalized for us for our later real utterance
     speak(' ');
-    
-
-
-
-
 
     if ( isActive ) {
       recognitionRef.current?.stop();
@@ -102,46 +95,35 @@ const Translator = () => {
     new SpeechSynthesisUtterance('test')
     
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
     recognitionRef.current = new SpeechRecognition();
 
-    // @ts-expect-error
-    recognitionRef.interimResults = true;
-
-    console.log('recognition', recognitionRef.current)
-
     recognitionRef.current.onstart = function() {
-      console.log('onstart')
       setIsActive(true);
     }
 
     recognitionRef.current.onend = function() {
-      console.log('onend')
       setIsActive(false);
       setIsSoundDetected(false);
     }
 
     recognitionRef.current.onaudiostart = function() {
-      console.log('onaudiostart')
       setIsSoundDetected(true);
     }
 
     recognitionRef.current.onaudioend = function() {
-      console.log('audioend')
       setIsSoundDetected(false);
     }
 
     recognitionRef.current.onsoundstart = function() {
-      console.log('onsoundstart')
       setIsSoundDetected(true);
     }
 
     recognitionRef.current.onsoundend = function() {
-      console.log('onsoundend')
       setIsSoundDetected(false);
     }
 
     recognitionRef.current.onresult = async function(event) {
-      console.log('onresult', event)
       const transcript = event.results[0][0].transcript;
 
       setText(transcript);
