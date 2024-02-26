@@ -84,6 +84,29 @@ const Translator = () => {
   // }, [text, synthRef.current, activeVoice])
 
   function handleOnClick() {
+
+
+    if ( !activeVoice || !synthRef.current ) return;
+    const utterance = new SpeechSynthesisUtterance('hi there');
+
+    utterance.voice = activeVoice;
+    utterance.pitch = 1
+    utterance.rate = 1
+    // @ts-expect-error
+    utterance.voiceURI = activeVoice.voiceURI;
+    utterance.volume = 1
+    utterance.rate = 1
+    utterance.pitch = 0.8
+    utterance.text = 'hi there'
+    utterance.lang = language
+
+    synthRef.current.cancel();
+    synthRef.current.speak(utterance);
+
+
+
+
+
     if ( isActive ) {
       recognitionRef.current?.stop();
       setIsActive(false);
