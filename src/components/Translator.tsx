@@ -57,24 +57,31 @@ const Translator = () => {
     }
   }, []);
 
-  useEffect(() => {
-    (async function run() {
-      if ( !text || !synthRef.current || !activeVoice ) return;
+  // useEffect(() => {
+  //   (async function run() {
+  //     if ( !text || !synthRef.current || !activeVoice ) return;
       
-      const translatedText = await translate(text);
+  //     const translatedText = await translate(text);
 
-      setTranslation(translatedText);
+  //     setTranslation(translatedText);
 
-      const utterance = new SpeechSynthesisUtterance(translatedText);
+  //     const utterance = new SpeechSynthesisUtterance(translatedText);
 
-      utterance.voice = activeVoice;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      utterance.rate = 1;
+  //     utterance.voice = activeVoice;
+  //     utterance.pitch = 1
+  //     utterance.rate = 1
+  //     // @ts-expect-error
+  //     utterance.voiceURI = activeVoice.voiceURI;
+  //     utterance.volume = 1
+  //     utterance.rate = 1
+  //     utterance.pitch = 0.8
+  //     utterance.text = text
+  //     utterance.lang = language
 
-      synthRef.current.speak(utterance);
-    })()
-  }, [text, synthRef.current, activeVoice])
+  //     synthRef.current.cancel();
+  //     synthRef.current.speak(utterance);
+  //   })()
+  // }, [text, synthRef.current, activeVoice])
 
   function handleOnClick() {
     if ( isActive ) {
@@ -125,10 +132,41 @@ const Translator = () => {
       setIsSoundDetected(false);
     }
 
-    recognitionRef.current.onresult = function(event) {
+    recognitionRef.current.onresult = async function(event) {
       console.log('onresult', event)
       const transcript = event.results[0][0].transcript;
+
       setText(transcript);
+
+      const translatedText = await translate(transcript);
+
+      setTranslation(translatedText);
+
+      if ( !activeVoice || !synthRef.current ) return;
+
+      const utterance = new SpeechSynthesisUtterance(translatedText);
+
+      utterance.voice = activeVoice;
+      utterance.pitch = 1
+      utterance.rate = 1
+      // @ts-expect-error
+      utterance.voiceURI = activeVoice.voiceURI;
+      utterance.volume = 1
+      utterance.rate = 1
+      utterance.pitch = 0.8
+      utterance.text = transcript
+      utterance.lang = language
+
+      synthRef.current.cancel();
+      synthRef.current.speak(utterance);
+
+
+
+
+
+
+
+
     }
 
     recognitionRef.current.start();
