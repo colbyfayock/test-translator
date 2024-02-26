@@ -62,6 +62,9 @@ const Translator = () => {
       const utterance = new SpeechSynthesisUtterance(translatedText);
 
       utterance.voice = activeVoice;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      utterance.rate = 1;
 
       synthRef.current.speak(utterance);
     })()
@@ -70,6 +73,8 @@ const Translator = () => {
   function handleOnClick() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
+
+    console.log('recognition', recognition)
 
     recognition.onstart = function() {
       setIsActive(true);
@@ -89,6 +94,7 @@ const Translator = () => {
     }
 
     recognition.onresult = function(event) {
+      console.log('event', event)
       const transcript = event.results[0][0].transcript;
       setText(transcript);
     }
